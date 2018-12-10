@@ -1,5 +1,7 @@
 package model;
 
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -109,11 +111,38 @@ public class Grid implements Iterable<Cell> {
         }
         return count;
     }
-
+    private CellState majorityNeighbours(List<Cell> neighbours){
+        int redCount=0;
+        for (Cell cell: neighbours) {
+            if(cell.isAlive()){
+                if(cell.getState().color==Color.RED){
+                    redCount++;
+                }
+            }
+        }
+        if(redCount>1){
+            return CellState.RED;
+        }
+        return CellState.BLUE;
+    }
 
     private CellState calculateNextState(int rowIndex, int columnIndex) {
-        if(countAliveNeighbours(rowIndex,columnIndex)==3)  return CellState.ALIVE;
-        else if(cells[rowIndex][columnIndex].isAlive() && countAliveNeighbours(rowIndex,columnIndex)==2)  return CellState.ALIVE;
+        if(countAliveNeighbours(rowIndex,columnIndex)==3){
+            if(cells[rowIndex][columnIndex].isAlive()) {
+                if (cells[rowIndex][columnIndex].getState().color == Color.RED) {
+                    return CellState.RED;
+                }
+                else return CellState.BLUE;
+            }
+            else return majorityNeighbours(getNeighbours(rowIndex,columnIndex));
+        }
+        else if(cells[rowIndex][columnIndex].isAlive() && countAliveNeighbours(rowIndex,columnIndex)==2){
+            if(cells[rowIndex][columnIndex].getState().color== Color.RED){
+                return CellState.RED;
+            }
+            return CellState.BLUE;
+
+        }
         else return CellState.DEAD;
     }
 
@@ -172,16 +201,17 @@ public class Grid implements Iterable<Cell> {
      * @param random {@link Random} instance used to decide if each {@link Cell} is ALIVE or DEAD.
      * @throws NullPointerException if {@code random} is {@code null}.
      */
-    // TODO: Écrire une version correcte de cette méthode.
+
     void randomGeneration(Random random) {
         for(int row=0;row<getNumberOfRows();row++)
         {
             for (int col = 0; col < getNumberOfColumns(); col++)
             {
-                if(random.nextBoolean())
-                    this.cells[row][col].setState(CellState.ALIVE);
-                else
-                    this.cells[row][col].setState(CellState.DEAD);
+                if(random.nextBoolean()){
+                    if(random.nextBoolean()){ this.cells[row][col].setState(CellState.RED); }
+                    else {this.cells[row][col].setState(CellState.BLUE);}
+                }
+                else {this.cells[row][col].setState(CellState.DEAD);}
             }
         }
 
