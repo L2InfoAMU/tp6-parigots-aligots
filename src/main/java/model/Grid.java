@@ -89,10 +89,14 @@ public class Grid implements Iterable<Cell> {
         return numberOfColumns;
     }
 
-
-    // TODO: Écrire une version correcte de cette méthode.
     private List<Cell> getNeighbours(int rowIndex, int columnIndex) {
-        return null;
+        List<Cell> neighbours = new ArrayList();
+        for(int i=-1;i<2;i++){
+            for(int j=-1;j<2;j++){
+                if(!(j==0 && i==0)) neighbours.add(getCell(rowIndex+i,columnIndex+j));
+            }
+        }
+        return neighbours;
     }
 
     private int countAliveNeighbours(int rowIndex, int columnIndex) {
